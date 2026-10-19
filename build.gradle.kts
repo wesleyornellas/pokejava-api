@@ -21,6 +21,9 @@ dependencies {
 	// REST API
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
 
+	// PokeAPI client
+	implementation("org.springframework.boot:spring-boot-starter-restclient")
+
 	// Persistence
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	runtimeOnly("org.postgresql:postgresql")
@@ -44,6 +47,8 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-security-test")
+	testImplementation("org.springframework.boot:spring-boot-starter-restclient-test")
+	testImplementation("com.tngtech.archunit:archunit-junit5:1.5.1")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 	// PostgreSQL integration tests

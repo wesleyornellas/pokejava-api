@@ -5,7 +5,14 @@ spring:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/pokejava}
     username: ${DB_USERNAME:pokejava}
     password: ${DB_PASSWORD:local_dev_password}
+  http:
+    clients:
+      connect-timeout: 2s
+      read-timeout: 5s
   jpa:
     open-in-view: false
     hibernate:
       ddl-auto: validate
+
+pokeapi:
+  base-url: https://pokeapi.co/api/v2

@@ -1,0 +1,9 @@
+{
+  "count": 1351,
+  "next": "https://pokeapi.co/api/v2/pokemon?offset=22&limit=2",
+  "previous": "https://pokeapi.co/api/v2/pokemon?offset=18&limit=2",
+  "results": [
+    { "name": "spearow", "url": "https://pokeapi.co/api/v2/pokemon/21/" },
+    { "name": "fearow", "url": "https://pokeapi.co/api/v2/pokemon/22/" }
+  ]
+}
