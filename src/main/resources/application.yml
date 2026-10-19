@@ -22,3 +22,8 @@ app:
     jwt:
       secret: ${JWT_SECRET:local-dev-jwt-secret-change-me-32b}
       expiration-minutes: ${JWT_EXPIRATION_MINUTES:60}
+  demo:
+    seed-enabled: true
+    username: demo
+    password: demo1234
+    display-name: Demo Trainer
