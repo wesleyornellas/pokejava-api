@@ -1,75 +1,64 @@
-# React + TypeScript + Vite
+# Pokédex web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive React and TypeScript field guide for the sibling Spring Boot API. Browse the PokéAPI catalog, inspect Pokémon details, and sign in to synchronize Pokémon into a local collection with editable field notes.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Paginated catalog and local collection views.
+- Pokémon detail view with description, stats, abilities, weight, and evolution line.
+- Search within the current page and filter by starter/electric/water/fire/grass categories.
+- Demo account sign-in and account registration.
+- Protected sync and local field-note updates using the API's bearer token.
+- Responsive layout, loading placeholders, and API error messages.
 
-## React Compiler
+## Run locally
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Requirements: Node.js 20+ and npm. Start the backend and PostgreSQL from the repository root:
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+docker compose up -d
+./gradlew bootRun
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+The API runs on `http://localhost:8080`. In another terminal:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+cd web
+npm install
+npm run dev
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Open the local URL printed by Vite (usually `http://localhost:5173`). Vite proxies `/api` requests to the Spring Boot server on port 8080.
 
+The seeded demo account is `demo` / `demo1234`. Demo Pokémon are seeded in the local collection by the backend, so open **My collection** to see and edit them. Catalog browsing and Pokémon details use the backend's public routes.
+
+## Configuration
+
+By default, the web app calls `/api/v1` on its current origin. The Vite development server proxies `/api` to `http://localhost:8080`. To point the frontend at a different API, set `VITE_API_URL` to the API base path, for example:
+
+```bash
+VITE_API_URL=https://api.example.com/api/v1 npm run dev
+```
+
+Vite reads this variable at startup; restart the dev server after changing it.
+
+## API routes used
+
+| Feature | Method and route |
+| --- | --- |
+| Browse catalog | `GET /api/v1/pokemon?page=0&size=20` |
+| Pokémon details | `GET /api/v1/pokemon/{idOrName}` |
+| Browse local collection | `GET /api/v1/local/pokemon?page=0&size=20` |
+| Local Pokémon details | `GET /api/v1/local/pokemon/{idOrName}` |
+| Register / sign in | `POST /api/v1/auth/register`, `POST /api/v1/auth/login` |
+| Synchronize Pokémon | `POST /api/v1/local/pokemon/{idOrName}/sync` (bearer token) |
+| Update field notes | `PUT /api/v1/local/pokemon/{idOrName}` (bearer token) |
+
+## Scripts
+
+```bash
+npm run dev      # Start the development server
+npm run lint     # Run ESLint
+npm run build    # Type-check and create a production build
+npm run preview  # Preview the production build
 ```

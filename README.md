@@ -6,7 +6,7 @@ Built with **Java 25**, **Spring Boot 4**, **Clean Architecture**, and **TDD**. 
 [PokeAPI](https://pokeapi.co/docs/v2), replicates selected Pokémon into PostgreSQL, and allows authenticated
 updates of proprietary fields (local name, region, tags).
 
-A frontend consumer lives under `web/` (developed separately).
+The React frontend lives in the `web/` folder and consumes this API.
 
 ## Architecture
 
@@ -22,7 +22,8 @@ A frontend consumer lives under `web/` (developed separately).
 
 ## Prerequisites
 
-- JDK 25
+- JDK 25 (backend)
+- Node.js 20+ and npm (frontend)
 - Docker Desktop (WSL2 backend on Windows)
 
 ## Environment variables
@@ -66,6 +67,28 @@ docker compose down -v     # wipe seeded data
 docker compose up -d postgres   # DB only
 ./gradlew bootRun
 ```
+
+## Frontend (`web/`)
+
+The UI is a **React + Vite + TypeScript** app in `web/`. Start the API first (`http://localhost:8080`), then:
+
+```bash
+cd web
+npm install          # first time only
+npm run dev
+```
+
+Vite serves the app at `http://localhost:5173` by default.
+
+Other useful scripts (from `web/`):
+
+```bash
+npm run build        # production build
+npm run preview      # preview the production build
+npm run lint
+```
+
+Use the seeded credentials (`demo` / `demo1234`) to exercise protected flows from the UI.
 
 ## Mock credentials & seeded data
 
@@ -146,5 +169,5 @@ Integration tests use Testcontainers (Docker required). Fast slice without DB co
 src/main/java/.../   Clean Architecture backend
 Dockerfile           Multi-stage JDK 25 build → JRE runtime
 compose.yaml         postgres + api
-web/                 Frontend (separate session — not part of this backend doc)
+web/                 React + Vite frontend (npm run dev)
 ```
