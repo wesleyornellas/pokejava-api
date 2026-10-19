@@ -8,6 +8,8 @@ import com.wesleyornellas.pokejava_api.application.port.PokemonCatalog;
 import com.wesleyornellas.pokejava_api.application.port.PokemonCatalog.CatalogPage;
 import com.wesleyornellas.pokejava_api.domain.InvalidPageRequestException;
 import com.wesleyornellas.pokejava_api.domain.PageResult;
+import com.wesleyornellas.pokejava_api.domain.PokemonDetail;
+import com.wesleyornellas.pokejava_api.domain.PokemonNotFoundException;
 import com.wesleyornellas.pokejava_api.domain.PokemonSummary;
 
 public class PokemonQueryService {
@@ -30,6 +32,13 @@ public class PokemonQueryService {
 
 		CatalogPage catalogPage = catalog.listPokemon((long) page * size, size);
 		return new PageResult<>(findSummaries(catalogPage.names()), page, size, catalogPage.totalCount());
+	}
+
+	public PokemonDetail getPokemon(String idOrName) {
+		if (idOrName == null || idOrName.isBlank()) {
+			throw new PokemonNotFoundException(idOrName == null ? "" : idOrName);
+		}
+		return catalog.findDetail(idOrName.trim().toLowerCase());
 	}
 
 	// The catalog's list endpoint only returns names, so each summary is a separate

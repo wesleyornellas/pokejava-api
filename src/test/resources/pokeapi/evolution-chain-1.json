@@ -1,0 +1,23 @@
+{
+  "id": 1,
+  "chain": {
+    "is_baby": false,
+    "species": { "name": "bulbasaur", "url": "https://pokeapi.co/api/v2/pokemon-species/1/" },
+    "evolution_details": [],
+    "evolves_to": [
+      {
+        "is_baby": false,
+        "species": { "name": "ivysaur", "url": "https://pokeapi.co/api/v2/pokemon-species/2/" },
+        "evolution_details": [],
+        "evolves_to": [
+          {
+            "is_baby": false,
+            "species": { "name": "venusaur", "url": "https://pokeapi.co/api/v2/pokemon-species/3/" },
+            "evolution_details": [],
+            "evolves_to": []
+          }
+        ]
+      }
+    ]
+  }
+}

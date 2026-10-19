@@ -5,5 +5,20 @@
     { "genus": "Pokémon Graine", "language": { "name": "fr", "url": "https://pokeapi.co/api/v2/language/5/" } },
     { "genus": "Seed Pokémon", "language": { "name": "en", "url": "https://pokeapi.co/api/v2/language/9/" } },
     { "genus": "たねポケモン", "language": { "name": "ja", "url": "https://pokeapi.co/api/v2/language/11/" } }
-  ]
+  ],
+  "flavor_text_entries": [
+    {
+      "flavor_text": "A strange seed was\nplanted on its\nback at birth.\fThe plant sprouts\nand grows with\nthis Pokémon.",
+      "language": { "name": "en", "url": "https://pokeapi.co/api/v2/language/9/" },
+      "version": { "name": "red", "url": "https://pokeapi.co/api/v2/version/1/" }
+    },
+    {
+      "flavor_text": "Il a une graine\nsur le dos.",
+      "language": { "name": "fr", "url": "https://pokeapi.co/api/v2/language/5/" },
+      "version": { "name": "red", "url": "https://pokeapi.co/api/v2/version/1/" }
+    }
+  ],
+  "evolution_chain": {
+    "url": "https://pokeapi.test/api/v2/evolution-chain/1/"
+  }
 }

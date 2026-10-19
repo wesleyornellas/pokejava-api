@@ -15,8 +15,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 import com.wesleyornellas.pokejava_api.application.port.CatalogUnavailableException;
 import com.wesleyornellas.pokejava_api.application.port.PokemonCatalog;
 import com.wesleyornellas.pokejava_api.application.port.PokemonCatalog.CatalogPage;
+import com.wesleyornellas.pokejava_api.domain.EvolutionStage;
 import com.wesleyornellas.pokejava_api.domain.InvalidPageRequestException;
 import com.wesleyornellas.pokejava_api.domain.PageResult;
+import com.wesleyornellas.pokejava_api.domain.PokemonDetail;
+import com.wesleyornellas.pokejava_api.domain.PokemonNotFoundException;
+import com.wesleyornellas.pokejava_api.domain.PokemonStat;
 import com.wesleyornellas.pokejava_api.domain.PokemonSummary;
 
 class PokemonQueryServiceTest {
@@ -85,6 +89,30 @@ class PokemonQueryServiceTest {
 		when(catalog.findSummary("ivysaur")).thenThrow(new CatalogUnavailableException("timeout", null));
 
 		assertThatThrownBy(() -> service.listPokemon(0, 2)).isInstanceOf(CatalogUnavailableException.class);
+	}
+
+	@Test
+	void returnsDetailForNormalizedName() {
+		PokemonDetail detail = new PokemonDetail(
+				1,
+				"bulbasaur",
+				"https://img/1.png",
+				"Seed Pokémon",
+				"A strange seed was planted on its back at birth.",
+				6.9,
+				List.of("overgrow", "chlorophyll"),
+				List.of(new PokemonStat("hp", 45)),
+				new EvolutionStage("bulbasaur", List.of()));
+		when(catalog.findDetail("bulbasaur")).thenReturn(detail);
+
+		assertThat(service.getPokemon(" Bulbasaur ")).isEqualTo(detail);
+	}
+
+	@Test
+	void rejectsBlankDetailLookup() {
+		assertThatThrownBy(() -> service.getPokemon("  "))
+				.isInstanceOf(PokemonNotFoundException.class);
+		verifyNoInteractions(catalog);
 	}
 
 }
