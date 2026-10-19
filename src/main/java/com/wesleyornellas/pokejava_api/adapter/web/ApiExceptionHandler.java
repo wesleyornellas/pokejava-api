@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.wesleyornellas.pokejava_api.application.port.CatalogUnavailableException;
+import com.wesleyornellas.pokejava_api.domain.DuplicateUsernameException;
+import com.wesleyornellas.pokejava_api.domain.InvalidCredentialsException;
 import com.wesleyornellas.pokejava_api.domain.InvalidPageRequestException;
 import com.wesleyornellas.pokejava_api.domain.InvalidPokemonUpdateException;
+import com.wesleyornellas.pokejava_api.domain.InvalidUserRegistrationException;
 import com.wesleyornellas.pokejava_api.domain.PokemonNotFoundException;
 
 @RestControllerAdvice
@@ -25,7 +28,20 @@ class ApiExceptionHandler {
 		return problem(HttpStatus.NOT_FOUND, ex.getMessage());
 	}
 
-	@ExceptionHandler({ InvalidPageRequestException.class, InvalidPokemonUpdateException.class })
+	@ExceptionHandler(DuplicateUsernameException.class)
+	ResponseEntity<Map<String, Object>> conflict(DuplicateUsernameException ex) {
+		return problem(HttpStatus.CONFLICT, ex.getMessage());
+	}
+
+	@ExceptionHandler(InvalidCredentialsException.class)
+	ResponseEntity<Map<String, Object>> unauthorized(InvalidCredentialsException ex) {
+		return problem(HttpStatus.UNAUTHORIZED, ex.getMessage());
+	}
+
+	@ExceptionHandler({
+			InvalidPageRequestException.class,
+			InvalidPokemonUpdateException.class,
+			InvalidUserRegistrationException.class })
 	ResponseEntity<Map<String, Object>> badRequest(RuntimeException ex) {
 		return problem(HttpStatus.BAD_REQUEST, ex.getMessage());
 	}

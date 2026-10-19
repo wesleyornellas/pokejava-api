@@ -16,3 +16,9 @@ spring:
 
 pokeapi:
   base-url: https://pokeapi.co/api/v2
+
+app:
+  security:
+    jwt:
+      secret: ${JWT_SECRET:local-dev-jwt-secret-change-me-32b}
+      expiration-minutes: ${JWT_EXPIRATION_MINUTES:60}
