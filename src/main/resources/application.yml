@@ -16,6 +16,9 @@ spring:
 
 pokeapi:
   base-url: https://pokeapi.co/api/v2
+  cache:
+    maximum-size: ${POKEAPI_CACHE_MAX_SIZE:500}
+    expire-after-write: ${POKEAPI_CACHE_TTL:10m}
 
 app:
   security:
@@ -23,7 +26,7 @@ app:
       secret: ${JWT_SECRET:local-dev-jwt-secret-change-me-32b}
       expiration-minutes: ${JWT_EXPIRATION_MINUTES:60}
   demo:
-    seed-enabled: true
-    username: demo
-    password: demo1234
-    display-name: Demo Trainer
+    seed-enabled: ${APP_DEMO_SEED_ENABLED:true}
+    username: ${APP_DEMO_USERNAME:demo}
+    password: ${APP_DEMO_PASSWORD:demo1234}
+    display-name: ${APP_DEMO_DISPLAY_NAME:Demo Trainer}

@@ -1,0 +1,17 @@
+.git
+.gradle
+build
+out
+bin
+.idea
+.vscode
+*.iml
+*.iws
+*.ipr
+HELP.md
+web
+**/node_modules
+**/.next
+**/dist
+agent-transcripts
+terminals
