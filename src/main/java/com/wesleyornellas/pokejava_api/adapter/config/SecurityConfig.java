@@ -19,6 +19,8 @@ class SecurityConfig {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers(HttpMethod.GET, "/api/v1/pokemon", "/api/v1/pokemon/**").permitAll()
+						.requestMatchers(HttpMethod.GET, "/api/v1/local/pokemon", "/api/v1/local/pokemon/**").permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/v1/local/pokemon/*/sync").permitAll()
 						.anyRequest().authenticated())
 				.httpBasic(Customizer.withDefaults())
 				.build();
