@@ -1,6 +1,7 @@
 package com.wesleyornellas.pokejava_api.application;
 
 import java.time.Clock;
+import java.util.List;
 import java.util.Optional;
 
 import com.wesleyornellas.pokejava_api.application.port.PokemonCatalog;
@@ -9,6 +10,7 @@ import com.wesleyornellas.pokejava_api.domain.InvalidPageRequestException;
 import com.wesleyornellas.pokejava_api.domain.LocalPokemon;
 import com.wesleyornellas.pokejava_api.domain.PageResult;
 import com.wesleyornellas.pokejava_api.domain.PokemonDetail;
+import com.wesleyornellas.pokejava_api.domain.PokemonEnrichment;
 import com.wesleyornellas.pokejava_api.domain.PokemonNotFoundException;
 
 public class LocalPokemonService {
@@ -51,6 +53,15 @@ public class LocalPokemonService {
 	public LocalPokemon get(String idOrName) {
 		String key = normalize(idOrName);
 		return findLocal(key).orElseThrow(() -> new PokemonNotFoundException(key));
+	}
+
+	/**
+	 * Updates proprietary fields for a Pokémon that already exists in the local store.
+	 */
+	public LocalPokemon update(String idOrName, String localName, String region, List<String> tags) {
+		LocalPokemon existing = get(idOrName);
+		PokemonEnrichment enrichment = PokemonEnrichment.of(localName, region, tags);
+		return store.save(existing.withEnrichment(enrichment));
 	}
 
 	private Optional<LocalPokemon> findLocal(String idOrName) {

@@ -21,6 +21,7 @@ class SecurityConfig {
 						.requestMatchers(HttpMethod.GET, "/api/v1/pokemon", "/api/v1/pokemon/**").permitAll()
 						.requestMatchers(HttpMethod.GET, "/api/v1/local/pokemon", "/api/v1/local/pokemon/**").permitAll()
 						.requestMatchers(HttpMethod.POST, "/api/v1/local/pokemon/*/sync").permitAll()
+						.requestMatchers(HttpMethod.PUT, "/api/v1/local/pokemon/*").permitAll()
 						.anyRequest().authenticated())
 				.httpBasic(Customizer.withDefaults())
 				.build();

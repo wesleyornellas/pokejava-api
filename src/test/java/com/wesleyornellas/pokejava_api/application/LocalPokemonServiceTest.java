@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -23,6 +24,7 @@ import com.wesleyornellas.pokejava_api.application.port.PokemonCatalog;
 import com.wesleyornellas.pokejava_api.application.port.PokemonStore;
 import com.wesleyornellas.pokejava_api.domain.EvolutionStage;
 import com.wesleyornellas.pokejava_api.domain.InvalidPageRequestException;
+import com.wesleyornellas.pokejava_api.domain.InvalidPokemonUpdateException;
 import com.wesleyornellas.pokejava_api.domain.LocalPokemon;
 import com.wesleyornellas.pokejava_api.domain.PageResult;
 import com.wesleyornellas.pokejava_api.domain.PokemonDetail;
@@ -151,6 +153,41 @@ class LocalPokemonServiceTest {
 	void rejectsInvalidLocalPageSize(int size) {
 		assertThatThrownBy(() -> service.list(0, size)).isInstanceOf(InvalidPageRequestException.class);
 		verifyNoInteractions(store);
+	}
+
+	@Test
+	void updatesProprietaryFieldsForExistingPokemon() {
+		LocalPokemon existing = LocalPokemon.fromCatalog(BULBASAUR_DETAIL, NOW);
+		when(store.findByName("bulbasaur")).thenReturn(Optional.of(existing));
+		when(store.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+		LocalPokemon updated = service.update("bulbasaur", "Bulbasaurzinho", "Kanto", List.of("Starter", "grass"));
+
+		assertThat(updated.localName()).isEqualTo("Bulbasaurzinho");
+		assertThat(updated.region()).isEqualTo("Kanto");
+		assertThat(updated.tags()).containsExactly("starter", "grass");
+		assertThat(updated.name()).isEqualTo("bulbasaur");
+		assertThat(updated.description()).isEqualTo(existing.description());
+		verifyNoInteractions(catalog);
+	}
+
+	@Test
+	void updateReturns404WhenPokemonIsNotStoredLocally() {
+		when(store.findByName("missingno")).thenReturn(Optional.empty());
+
+		assertThatThrownBy(() -> service.update("missingno", "Name", "Region", List.of("tag")))
+				.isInstanceOf(PokemonNotFoundException.class);
+	}
+
+	@Test
+	void updateRejectsInvalidPayloadBeforeSaving() {
+		LocalPokemon existing = LocalPokemon.fromCatalog(BULBASAUR_DETAIL, NOW);
+		when(store.findByName("bulbasaur")).thenReturn(Optional.of(existing));
+
+		assertThatThrownBy(() -> service.update("bulbasaur", "ok", "ok", null))
+				.isInstanceOf(InvalidPokemonUpdateException.class);
+		verify(store).findByName("bulbasaur");
+		verify(store, never()).save(any());
 	}
 
 }

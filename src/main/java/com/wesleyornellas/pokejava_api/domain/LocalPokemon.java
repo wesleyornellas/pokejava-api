@@ -61,4 +61,23 @@ public record LocalPokemon(
 				syncedAt);
 	}
 
+	/**
+	 * Replaces proprietary enrichment fields; catalog-sourced data stays unchanged.
+	 */
+	public LocalPokemon withEnrichment(PokemonEnrichment enrichment) {
+		return new LocalPokemon(
+				id,
+				name,
+				imageUrl,
+				category,
+				description,
+				weightKg,
+				abilities,
+				stats,
+				enrichment.localName(),
+				enrichment.region(),
+				enrichment.tags(),
+				syncedAt);
+	}
+
 }

@@ -1,8 +1,12 @@
 package com.wesleyornellas.pokejava_api.adapter.web;
 
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -18,6 +22,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.wesleyornellas.pokejava_api.application.LocalPokemonService;
+import com.wesleyornellas.pokejava_api.domain.InvalidPokemonUpdateException;
 import com.wesleyornellas.pokejava_api.domain.LocalPokemon;
 import com.wesleyornellas.pokejava_api.domain.PageResult;
 import com.wesleyornellas.pokejava_api.domain.PokemonNotFoundException;
@@ -86,6 +91,71 @@ class LocalPokemonControllerTest {
 
 		mockMvc.perform(get("/api/v1/local/pokemon/missingno"))
 				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void updatesLocalPokemon() throws Exception {
+		when(localPokemonService.update(eq("bulbasaur"), eq("Bulbasaurzinho"), eq("Kanto"), eq(List.of("starter"))))
+				.thenReturn(BULBASAUR);
+
+		mockMvc.perform(put("/api/v1/local/pokemon/bulbasaur")
+				.contentType(APPLICATION_JSON)
+				.content("""
+						{
+						  "localName": "Bulbasaurzinho",
+						  "region": "Kanto",
+						  "tags": ["starter"]
+						}
+						"""))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.localName").value("Bulbasaurzinho"))
+				.andExpect(jsonPath("$.region").value("Kanto"));
+	}
+
+	@Test
+	void mapsMissingPokemonOnUpdateTo404() throws Exception {
+		when(localPokemonService.update(eq("missingno"), isNull(), isNull(), eq(List.of())))
+				.thenThrow(new PokemonNotFoundException("missingno"));
+
+		mockMvc.perform(put("/api/v1/local/pokemon/missingno")
+				.contentType(APPLICATION_JSON)
+				.content("""
+						{ "localName": null, "region": null, "tags": [] }
+						"""))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void mapsDomainValidationFailureTo400() throws Exception {
+		when(localPokemonService.update(eq("bulbasaur"), eq("ok"), eq("ok"), eq(List.of("  "))))
+				.thenThrow(new InvalidPokemonUpdateException("tags must not contain blank values"));
+
+		mockMvc.perform(put("/api/v1/local/pokemon/bulbasaur")
+				.contentType(APPLICATION_JSON)
+				.content("""
+						{ "localName": "ok", "region": "ok", "tags": ["  "] }
+						"""))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message").value("tags must not contain blank values"));
+	}
+
+	@Test
+	void mapsMissingTagsFieldTo400() throws Exception {
+		mockMvc.perform(put("/api/v1/local/pokemon/bulbasaur")
+				.contentType(APPLICATION_JSON)
+				.content("""
+						{ "localName": "ok", "region": "ok" }
+						"""))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void mapsMalformedJsonTo400() throws Exception {
+		mockMvc.perform(put("/api/v1/local/pokemon/bulbasaur")
+				.contentType(APPLICATION_JSON)
+				.content("{ not-json }"))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message").value("Malformed request body"));
 	}
 
 }
